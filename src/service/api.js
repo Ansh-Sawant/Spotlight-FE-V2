@@ -1,7 +1,9 @@
 import axios from "axios";
+import bcrypt from "bcryptjs";
+import { URL } from "../utils/constants";
 
-const URL = `http://localhost:8080/api`;
-// const URL = `https://api-spotlightansh.onrender.com`;
+const salt = bcrypt.genSaltSync(10);
+
 
 const getNews = async () => {
   try {
@@ -14,10 +16,11 @@ const getNews = async () => {
 
 const register = async (user) => {
   const { name, email, password, confirmPassword } = user;
+  const hashedPassword = bcrypt.hashSync(password, salt);
   if (name && email && password && password === confirmPassword) {
     try {
-      const response = await axios.post(`${URL}/register`, user);
-      alert(response.data.message);
+      const response = await axios.post(`${URL}/register`, { name: user.name, email: user.email, password: hashedPassword });
+      alert("User Regestered Succussfully");
     } catch (error) {
       console.error(`Error while calling Register API`, error);
       alert("Registration failed. Please try again.");

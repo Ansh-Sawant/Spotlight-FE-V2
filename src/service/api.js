@@ -4,7 +4,6 @@ import { URL } from "../utils/constants";
 
 const salt = bcrypt.genSaltSync(10);
 
-
 const getNews = async () => {
   try {
     const response = await axios.get(`${URL}/news`);
@@ -16,10 +15,10 @@ const getNews = async () => {
 
 const register = async (user) => {
   const { name, email, password, confirmPassword } = user;
-  const hashedPassword = bcrypt.hashSync(password, salt);
+  // const hashedPassword = bcrypt.hashSync(password, salt);
   if (name && email && password && password === confirmPassword) {
     try {
-      const response = await axios.post(`${URL}/register`, { name: user.name, email: user.email, password: hashedPassword });
+      const response = await axios.post(`${URL}/register`, { name: user.name, email: user.email, password: password });
       alert("User Regestered Succussfully");
     } catch (error) {
       console.error(`Error while calling Register API`, error);
@@ -47,7 +46,7 @@ const register = async (user) => {
 const bookmarks = async (bookmark) => {
   try {
     const response = await axios.post(`${URL}/bookmarks`, bookmark);
-    alert(response.data.message);
+    alert(response.data);
   } catch (error) {
     console.error(`Error while calling Bookmarks API`, error);
     alert("Failed to add bookmark. Please try again.");

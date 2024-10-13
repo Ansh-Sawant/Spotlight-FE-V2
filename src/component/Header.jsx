@@ -9,6 +9,8 @@ import Signup from "./Signup";
 
 const Header = () => {
   const [loginUser, setLoginUser] = useState({});
+  console.log(loginUser);
+  
 
   return (
     <Router>
@@ -71,7 +73,7 @@ const Header = () => {
             <Button
               color="inherit"
               component={Link}
-              to={loginUser && loginUser._id ? "/" : "/login"}
+              to={loginUser && loginUser.id ? "/" : "/login"}
               sx={{
                 color: "#333",
                 textTransform: "none",
@@ -81,7 +83,7 @@ const Header = () => {
                 },
               }}
             >
-              {loginUser && loginUser._id ? loginUser.name : "Login"}
+              {loginUser && loginUser.id ? loginUser.username : "Login"}
             </Button>
           </Toolbar>
         </AppBar>

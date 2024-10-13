@@ -3,9 +3,11 @@ import PropTypes from "prop-types";
 import { bookmarks } from "../service/api";
 
 const Article = ({ article, loginUser }) => {
+  console.log(loginUser);
+  
   const bookMarkedNews = {
-    name: loginUser.loginUser?.name,
-    email: loginUser.loginUser?.email,
+    name: loginUser?.username,
+    email: loginUser?.email,
     author: article.author,
     title: article.title,
     description: article.description,
@@ -112,10 +114,8 @@ const Article = ({ article, loginUser }) => {
 Article.propTypes = {
   article: PropTypes.object.isRequired,
   loginUser: PropTypes.shape({
-    loginUser: PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      email: PropTypes.string.isRequired,
-    }),
+    username: PropTypes.string.isRequired,
+    email: PropTypes.string.isRequired,
   }),
 };
 

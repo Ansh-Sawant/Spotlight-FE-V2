@@ -13,7 +13,6 @@ const Articles = ({ loginUser }) => {
     const fetchNews = async () => {
       try {
         const response = await getNews(0);
-        console.log(response);
         
         setNews(response);
       } catch (error) {

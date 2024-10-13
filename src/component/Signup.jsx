@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { TextField, Button, Typography, Container, Box } from "@mui/material";
+
 import { register } from "../service/api";
+import Footer from "./Footer";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -95,6 +97,8 @@ const Signup = () => {
           </form>
         </Box>
       </Box>
+
+      <Footer />
     </Container>
   );
 };

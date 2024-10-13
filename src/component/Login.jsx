@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Box, Container, Typography, TextField, Button } from "@mui/material";
-import PropTypes from 'prop-types';
 import { useNavigate } from "react-router-dom";
+import PropTypes from 'prop-types';
+import { Box, Container, Typography, TextField, Button } from "@mui/material";
 import axios from "axios";
+import bcrypt from "bcryptjs";
+
 import Footer from "./Footer";
 import { URL } from "../utils/constants";
-import bcrypt from "bcryptjs";
 
 const Login = ({ setLoginUser }) => {
   const navigate = useNavigate();
@@ -24,13 +25,15 @@ const Login = ({ setLoginUser }) => {
   };
 
   const handleLogin = () => {
-    const hashedPassword = bcrypt.hashSync(user.password, salt);
-    axios.post(`${URL}/login`, { email: user.email, password: hashedPassword })
+    // const hashedPassword = bcrypt.hashSync(user.password, salt);
+    axios.post(`${URL}/login`, { email: user.email, password: user.password })
       .then((res) => {
-        alert(res.data.message);
-        if (res.data.user) {
-          setLoginUser(res.data.user);
+        if (res.data.id) {
+          alert("Login Successful");
+          setLoginUser(res.data);
           navigate("/");
+        } else {
+          alert(res.data);
         }
       });
   };

@@ -63,14 +63,14 @@ const getBookmarks = async () => {
   }
 };
 
-const deleteBookmarks = async (email, title) => {
-  const deleteBook = { email, title };
+const deleteBookmarks = async (email, title, id) => {
+  const deleteBook = { email, title, id };
   try {
-    const response = await axios.post(`${URL}/deleteBookmarks`, deleteBook);
+    await axios.post(`${URL}/deleteBookmarks`, deleteBook);
     alert("Bookmark Removed");
   } catch (error) {
     console.error(`Error while calling DeleteBookmarks API`, error);
-    alert("Failed to remove bookmark. Please try again.");
+    alert("Failed to remove bookmarked news. Please try again.");
   }
 };
 

@@ -9,8 +9,6 @@ import Signup from "./Signup";
 
 const Header = () => {
   const [loginUser, setLoginUser] = useState({});
-  console.log(loginUser);
-  
 
   return (
     <Router>

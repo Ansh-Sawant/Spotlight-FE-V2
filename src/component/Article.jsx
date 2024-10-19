@@ -1,10 +1,9 @@
 import { Box, Typography, Button, Avatar } from "@mui/material";
 import PropTypes from "prop-types";
 import { bookmarks } from "../service/api";
+import { formatDate } from "../utils/constants";
 
 const Article = ({ article, loginUser }) => {
-  console.log(loginUser);
-  
   const bookMarkedNews = {
     name: loginUser?.username,
     email: loginUser?.email,
@@ -64,7 +63,7 @@ const Article = ({ article, loginUser }) => {
 
           {/* Author and Date */}
           <Typography variant="body2" color="textSecondary">
-            By {article.author} | {article.publishedAt}
+            By {article.author} | {formatDate(article.publishedAt)}
           </Typography>
 
           {/* Description */}

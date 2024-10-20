@@ -1,5 +1,5 @@
-export const URL = `http://localhost:8080/api`;
-// export const URL = `https://api-spotlightansh.onrender.com`;
+// export const URL = `http://localhost:8080/api`;
+export const URL = `https://api-spotlight-ansh-production.up.railway.app/api`;
 
 export const formatDate = (isoDate) => {
     const date = new Date(isoDate);

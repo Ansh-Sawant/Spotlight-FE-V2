@@ -14,6 +14,8 @@ import Footer from "./Footer";
 const Bookmarks = ({ loginUser }) => {
   const [bookmarks, setBookmarks] = useState([]);
   const [bookmarkChange, setBookmarkChange] = useState(false);
+  const storedUser = JSON.parse(localStorage.getItem("loginUser"));
+  const currentUser = loginUser?.email ? loginUser : storedUser;
 
   useEffect(() => {
     fetchBookmarks();
@@ -21,7 +23,7 @@ const Bookmarks = ({ loginUser }) => {
 
   const fetchBookmarks = async () => {
     const response = await getBookmarks();
-    setBookmarks(response);
+    setBookmarks(response || []);
   };
 
   const handleRemove = (email, title, id) => {
@@ -35,9 +37,9 @@ const Bookmarks = ({ loginUser }) => {
         My Bookmarks
       </Typography>
 
-      {loginUser.email && bookmarks.length > 0 ? (
+      {currentUser?.email && bookmarks.length > 0 ? (
         bookmarks.map((bmNews) =>
-          bmNews.email === loginUser.email ? (
+          bmNews.email === currentUser.email ? (
             <Box
               key={bmNews.title}
               sx={{
@@ -57,7 +59,6 @@ const Bookmarks = ({ loginUser }) => {
                   alignItems: "center",
                 }}
               >
-                {/* Bookmark Image */}
                 <Avatar
                   variant="square"
                   src={bmNews.urlToImage}
@@ -78,22 +79,18 @@ const Bookmarks = ({ loginUser }) => {
                     textAlign: { xs: "center", md: "left" },
                   }}
                 >
-                  {/* Bookmark Title */}
                   <Typography variant="h6" component="h2" sx={{ fontWeight: "bold" }}>
                     {bmNews.title}
                   </Typography>
 
-                  {/* Author and Date */}
                   <Typography variant="body2" color="textSecondary">
                     By {bmNews.author} | {formatDate(bmNews.publishedAt)}
                   </Typography>
 
-                  {/* Description */}
                   <Typography variant="body1" sx={{ marginTop: "8px" }}>
                     {bmNews.description}
                   </Typography>
 
-                  {/* Action Buttons */}
                   <Box
                     sx={{
                       display: "flex",

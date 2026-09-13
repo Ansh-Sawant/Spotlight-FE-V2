@@ -30,6 +30,8 @@ const Login = ({ setLoginUser }) => {
       .then((res) => {
         if (res.data.id) {
           alert("Login Successful");
+          localStorage.setItem("token", res.data.token);
+          localStorage.setItem("loginUser", JSON.stringify(res.data));
           setLoginUser(res.data);
           navigate("/");
         } else {

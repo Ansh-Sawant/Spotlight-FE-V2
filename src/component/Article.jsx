@@ -16,6 +16,15 @@ const Article = ({ article, loginUser }) => {
     content: article.content,
   };
 
+  const handleBookmark = () => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      bookmarks(bookMarkedNews);
+    } else {
+      alert("Please Login First");
+    }
+  }
+
   return (
     <Box
       sx={{
@@ -82,13 +91,7 @@ const Article = ({ article, loginUser }) => {
             <Button
               variant="contained"
               color="primary"
-              onClick={() => {
-                if (bookMarkedNews.name) {
-                  bookmarks(bookMarkedNews);
-                } else {
-                  alert("Please Login First");
-                }
-              }}
+              onClick={() => handleBookmark()}
               sx={{
                 marginRight: "20px",
               }}

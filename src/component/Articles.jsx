@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { CircularProgress, Container, Box, Typography, Stack } from '@mui/material';
+import {
+  CircularProgress,
+  Container,
+  Box,
+  Typography,
+  Stack,
+} from "@mui/material";
 import { getNews } from "../service/api";
 import Article from "./Article";
 import Footer from "./Footer";
@@ -13,7 +19,7 @@ const Articles = ({ loginUser }) => {
     const fetchNews = async () => {
       try {
         const response = await getNews(0);
-        
+
         setNews(response);
       } catch (error) {
         console.error("Error fetching news:", error);
@@ -28,7 +34,7 @@ const Articles = ({ loginUser }) => {
   return (
     <Container>
       {loading ? (
-        <Box sx={{ textAlign: 'center', marginTop: '20px' }}>
+        <Box sx={{ textAlign: "center", marginTop: "20px" }}>
           <CircularProgress />
         </Box>
       ) : (
@@ -40,7 +46,7 @@ const Articles = ({ loginUser }) => {
               </Box>
             ))
           ) : (
-            <Box sx={{ textAlign: 'center', width: '100%', marginTop: '20px' }}>
+            <Box sx={{ textAlign: "center", width: "100%", marginTop: "20px" }}>
               <Typography variant="h6">No articles available</Typography>
             </Box>
           )}

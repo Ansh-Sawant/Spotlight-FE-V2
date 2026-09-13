@@ -4,6 +4,10 @@ import { URL } from "../utils/constants";
 
 const salt = bcrypt.genSaltSync(10);
 
+const getAuthHeaders = () => ({
+  Authorization: `Bearer ${localStorage.getItem("token")}`,
+});
+
 const getNews = async () => {
   try {
     const response = await axios.get(`${URL}/news`);
@@ -29,23 +33,11 @@ const register = async (user) => {
   }
 };
 
-// const login = async (user, setLoginUser) => {
-//   try {
-//     const response = await axios.post(`${URL}/login`, user);
-//     alert(response.data.message);
-//     if (response.data.user) {
-//       setLoginUser(response.data.user);
-//       window.history.pushState("pg", "title", "/");
-//     }
-//   } catch (error) {
-//     console.error(`Error while calling Login API`, error);
-//     alert("Login failed. Please try again.");
-//   }
-// };
-
 const bookmarks = async (bookmark) => {
   try {
-    const response = await axios.post(`${URL}/bookmarks`, bookmark);
+    const response = await axios.post(`${URL}/bookmarks`, bookmark, {
+      headers: getAuthHeaders(),
+    });
     alert(response.data);
   } catch (error) {
     console.error(`Error while calling Bookmarks API`, error);
@@ -55,7 +47,9 @@ const bookmarks = async (bookmark) => {
 
 const getBookmarks = async () => {
   try {
-    const response = await axios.get(`${URL}/bookmarkedNews`);
+    const response = await axios.get(`${URL}/bookmarkedNews`, {
+      headers: getAuthHeaders(),
+    });
     return response.data;
   } catch (error) {
     console.error(`Error while calling bookmarkedNews API`, error);
@@ -66,7 +60,9 @@ const getBookmarks = async () => {
 const deleteBookmarks = async (email, title, id) => {
   const deleteBook = { email, title, id };
   try {
-    await axios.post(`${URL}/deleteBookmarks`, deleteBook);
+    await axios.post(`${URL}/deleteBookmarks`, deleteBook, {
+      headers: getAuthHeaders(),
+    });
     alert("Bookmark Removed");
   } catch (error) {
     console.error(`Error while calling DeleteBookmarks API`, error);

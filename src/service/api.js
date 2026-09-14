@@ -92,4 +92,22 @@ const deleteBookmarks = async (email, title, id) => {
   }
 };
 
-export { getNews, register, bookmarks, getBookmarks, deleteBookmarks };
+const askSpotlight = async (question, articleContent) => {
+  try {
+    const response = await axios.post(`${URL}/ai/ask`, {
+      question,
+      articleContent,
+    }, {
+      headers: getAuthHeaders(),
+    });
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error(`Error while calling Ask Spotlight API`, error);
+    return {
+      success: false,
+      message: "Failed to get AI response. Please try again.",
+    };
+  }
+};
+
+export { getNews, register, bookmarks, getBookmarks, deleteBookmarks, askSpotlight };

@@ -1,12 +1,19 @@
-import { Box, Typography, Button, Avatar } from "@mui/material";
+import { Box, Typography, Button, Avatar, TextField, CircularProgress } from "@mui/material";
 import PropTypes from "prop-types";
 import { useState } from "react";
-import { bookmarks } from "../service/api";
+import { bookmarks, askSpotlight } from "../service/api";
 import { formatDate } from "../utils/constants";
 import Notification from "./Notification";
+import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
+import MenuBookIcon from "@mui/icons-material/MenuBook";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 
 const Article = ({ article, loginUser }) => {
   const [notification, setNotification] = useState(null);
+  const [showAskSpotlight, setShowAskSpotlight] = useState(false);
+  const [question, setQuestion] = useState("");
+  const [answer, setAnswer] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const bookMarkedNews = {
     name: loginUser?.username,
@@ -41,6 +48,36 @@ const Article = ({ article, loginUser }) => {
       setNotification({
         message: "Please Login First",
         type: "warning",
+      });
+    }
+  };
+
+  const handleAskSpotlight = async () => {
+    if (!question.trim()) {
+      setNotification({
+        message: "Please enter a question",
+        type: "warning",
+      });
+      return;
+    }
+
+    setLoading(true);
+    setAnswer("");
+
+    const articleContent = `
+      Title: ${article.title}
+      Description: ${article.description}
+      Content: ${article.content}
+    `;
+    const result = await askSpotlight(question, articleContent);
+
+    setLoading(false);
+    if (result.success) {
+      setAnswer(result.data.answer);
+    } else {
+      setNotification({
+        message: result.message,
+        type: "error",
       });
     }
   };
@@ -109,9 +146,10 @@ const Article = ({ article, loginUser }) => {
             }}
           >
             <Button
-              variant="contained"
+              variant="outlined"
               color="primary"
               onClick={() => handleBookmark()}
+              startIcon={<BookmarkBorderIcon />}
               sx={{
                 marginRight: "20px",
               }}
@@ -123,12 +161,68 @@ const Article = ({ article, loginUser }) => {
               color="primary"
               href={article.url}
               target="_blank"
+              startIcon={<MenuBookIcon />}
+              sx={{
+                marginRight: "20px",
+              }}
             >
               Read More
+            </Button>
+            <Button
+              variant="outlined"
+              color="secondary"
+              startIcon={<AutoAwesomeIcon />}
+              onClick={() => setShowAskSpotlight((prev) => !prev)}
+            >
+              Ask Spotlight AI
             </Button>
           </Box>
         </Box>
       </Box>
+
+      {showAskSpotlight && (
+        <Box sx={{ marginTop: "20px" }}>
+          <Typography variant="h6" sx={{ marginBottom: "10px" }}>
+            Ask Spotlight AI
+          </Typography>
+
+          <TextField
+            fullWidth
+            label="Ask a question about this article"
+            value={question}
+            onChange={(e) => setQuestion(e.target.value)}
+          />
+
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={handleAskSpotlight}
+            disabled={loading}
+            sx={{ marginTop: "10px" }}
+          >
+            {loading ? <CircularProgress size={24} /> : "ASK"}
+          </Button>
+
+          {answer && (
+            <Box
+              sx={{
+                marginTop: "20px",
+                padding: "16px",
+                border: "1px solid #e0e0e0",
+                borderRadius: "8px",
+                backgroundColor: "#fff",
+              }}
+            >
+              <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+                Spotlight AI
+              </Typography>
+              <Typography variant="body1" sx={{ marginTop: "8px" }}>
+                {answer}
+              </Typography>
+            </Box>
+          )}
+        </Box>
+      )}
 
       <Notification
         notification={notification}

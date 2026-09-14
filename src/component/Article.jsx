@@ -1,9 +1,13 @@
 import { Box, Typography, Button, Avatar } from "@mui/material";
 import PropTypes from "prop-types";
+import { useState } from "react";
 import { bookmarks } from "../service/api";
 import { formatDate } from "../utils/constants";
+import Notification from "./Notification";
 
 const Article = ({ article, loginUser }) => {
+  const [notification, setNotification] = useState(null);
+
   const bookMarkedNews = {
     name: loginUser?.username,
     email: loginUser?.email,
@@ -16,14 +20,30 @@ const Article = ({ article, loginUser }) => {
     content: article.content,
   };
 
-  const handleBookmark = () => {
+  const handleBookmark = async () => {
     const token = localStorage.getItem("token");
+
     if (token) {
-      bookmarks(bookMarkedNews);
+      const result = await bookmarks(bookMarkedNews);
+
+      if (result.success) {
+        setNotification({
+          message: result.message,
+          type: "success",
+        });
+      } else {
+        setNotification({
+          message: result.message,
+          type: "error",
+        });
+      }
     } else {
-      alert("Please Login First");
+      setNotification({
+        message: "Please Login First",
+        type: "warning",
+      });
     }
-  }
+  };
 
   return (
     <Box
@@ -109,6 +129,11 @@ const Article = ({ article, loginUser }) => {
           </Box>
         </Box>
       </Box>
+
+      <Notification
+        notification={notification}
+        onClose={() => setNotification(null)}
+      />
     </Box>
   );
 };

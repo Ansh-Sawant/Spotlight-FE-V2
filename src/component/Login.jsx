@@ -6,6 +6,7 @@ import axios from "axios";
 import bcrypt from "bcryptjs";
 
 import Footer from "./Footer";
+import Notification from "./Notification";
 import { URL } from "../utils/constants";
 
 const Login = ({ setLoginUser }) => {
@@ -14,6 +15,7 @@ const Login = ({ setLoginUser }) => {
     email: "",
     password: "",
   });
+  const [notification, setNotification] = useState(null);
   const salt = bcrypt.genSaltSync(10);
 
   const handleChange = (e) => {
@@ -29,14 +31,27 @@ const Login = ({ setLoginUser }) => {
     axios.post(`${URL}/login`, { email: user.email, password: user.password })
       .then((res) => {
         if (res.data.id) {
-          alert("Login Successful");
+          setNotification({
+            message: "Login Successful",
+            type: "success",
+          });
           localStorage.setItem("token", res.data.token);
           localStorage.setItem("loginUser", JSON.stringify(res.data));
           setLoginUser(res.data);
-          navigate("/");
+          setTimeout(() => navigate("/"), 2000);
         } else {
-          alert(res.data);
+          setNotification({
+            message: res.data,
+            type: "error",
+          });
         }
+      })
+      .catch((error) => {
+        console.error("Error while calling Login API", error);
+        setNotification({
+          message: "Login failed. Please try again.",
+          type: "error",
+        });
       });
   };
 
@@ -89,6 +104,11 @@ const Login = ({ setLoginUser }) => {
           </Button>
         </form>
       </Box>
+
+      <Notification
+        notification={notification}
+        onClose={() => setNotification(null)}
+      />
 
       <Footer />
     </Container>

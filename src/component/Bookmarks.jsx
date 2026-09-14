@@ -6,14 +6,19 @@ import {
   Button,
   Avatar,
   Container,
+  CircularProgress,
 } from "@mui/material";
 import { deleteBookmarks, getBookmarks } from "../service/api";
 import { formatDate } from "../utils/constants";
 import Footer from "./Footer";
+import Notification from "./Notification";
 
 const Bookmarks = ({ loginUser }) => {
   const [bookmarks, setBookmarks] = useState([]);
   const [bookmarkChange, setBookmarkChange] = useState(false);
+  const [notification, setNotification] = useState(null);
+  const [loading, setLoading] = useState(true);
+
   const storedUser = JSON.parse(localStorage.getItem("loginUser"));
   const currentUser = loginUser?.email ? loginUser : storedUser;
 
@@ -22,13 +27,34 @@ const Bookmarks = ({ loginUser }) => {
   }, [bookmarkChange]);
 
   const fetchBookmarks = async () => {
+    setLoading(true);
     const response = await getBookmarks();
-    setBookmarks(response || []);
+    if (response.success) {
+      setBookmarks(response.message || []);
+    } else {
+      setNotification({
+        message: response.message,
+        type: "error",
+      });
+    }
+    setLoading(false);
   };
 
-  const handleRemove = (email, title, id) => {
-    deleteBookmarks(email, title, id);
-    setBookmarkChange((prev) => !prev);
+  const handleRemove = async (email, title, id) => {
+    const result = await deleteBookmarks(email, title, id);
+
+    if (result.success) {
+      setNotification({
+        message: result.message,
+        type: "success",
+      });
+      setBookmarkChange((prev) => !prev);
+    } else {
+      setNotification({
+        message: result.message,
+        type: "error",
+      });
+    }
   };
 
   return (
@@ -37,7 +63,17 @@ const Bookmarks = ({ loginUser }) => {
         My Bookmarks
       </Typography>
 
-      {currentUser?.email && bookmarks.length > 0 ? (
+      {loading ? (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "40px",
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      ) : currentUser?.email && bookmarks.length > 0 ? (
         bookmarks.map((bmNews) =>
           bmNews.email === currentUser.email ? (
             <Box
@@ -129,6 +165,11 @@ const Bookmarks = ({ loginUser }) => {
           </Typography>
         </Box>
       )}
+
+      <Notification
+        notification={notification}
+        onClose={() => setNotification(null)}
+      />
 
       <Footer />
     </Container>

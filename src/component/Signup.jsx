@@ -4,6 +4,7 @@ import { TextField, Button, Typography, Container, Box } from "@mui/material";
 
 import { register } from "../service/api";
 import Footer from "./Footer";
+import Notification from "./Notification";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -14,6 +15,7 @@ const Signup = () => {
     password: "",
     confirmPassword: "",
   });
+  const [notification, setNotification] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -23,8 +25,20 @@ const Signup = () => {
     });
   };
 
-  const handleSubmit = () => {
-    register(user);
+  const handleSubmit = async () => {
+    const result = await register(user);
+
+    if (result.success) {
+      setNotification({
+        message: result.message,
+        type: "success",
+      });
+    } else {
+      setNotification({
+        message: result.message,
+        type: "error",
+      });
+    }
   };
 
   return (
@@ -97,6 +111,11 @@ const Signup = () => {
           </form>
         </Box>
       </Box>
+
+      <Notification
+        notification={notification}
+        onClose={() => setNotification(null)}
+      />
 
       <Footer />
     </Container>

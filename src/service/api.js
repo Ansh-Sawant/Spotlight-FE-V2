@@ -1,8 +1,5 @@
 import axios from "axios";
-import bcrypt from "bcryptjs";
 import { URL } from "../utils/constants";
-
-const salt = bcrypt.genSaltSync(10);
 
 const getAuthHeaders = () => ({
   Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -19,18 +16,28 @@ const getNews = async () => {
 
 const register = async (user) => {
   const { name, email, password, confirmPassword } = user;
-  // const hashedPassword = bcrypt.hashSync(password, salt);
+
   if (name && email && password && password === confirmPassword) {
     try {
-      const response = await axios.post(`${URL}/register`, { name: user.name, email: user.email, password: password });
-      alert("User Regestered Succussfully");
+      const response = await axios.post(`${URL}/register`, {
+        name: user.name,
+        email: user.email,
+        password: password,
+      });
+      return { success: true, message: response.data };
     } catch (error) {
       console.error(`Error while calling Register API`, error);
-      alert("Registration failed. Please try again.");
+      return {
+        success: false,
+        message: "Registration failed. Please try again.",
+      };
     }
-  } else {
-    alert("Invalid Input. Make sure all fields are filled and passwords match.");
   }
+
+  return {
+    success: false,
+    message: "Invalid Input. Make sure all fields are filled and passwords match.",
+  };
 };
 
 const bookmarks = async (bookmark) => {
@@ -38,10 +45,13 @@ const bookmarks = async (bookmark) => {
     const response = await axios.post(`${URL}/bookmarks`, bookmark, {
       headers: getAuthHeaders(),
     });
-    alert(response.data);
+    return { success: true, message: response.data };
   } catch (error) {
     console.error(`Error while calling Bookmarks API`, error);
-    alert("Failed to add bookmark. Please try again.");
+    return {
+      success: false,
+      message: "Failed to add bookmark. Please try again.",
+    };
   }
 };
 
@@ -50,10 +60,19 @@ const getBookmarks = async () => {
     const response = await axios.get(`${URL}/bookmarkedNews`, {
       headers: getAuthHeaders(),
     });
-    return response.data;
+    return { success: true, message: response.data };
   } catch (error) {
     console.error(`Error while calling bookmarkedNews API`, error);
-    alert("Failed to fetch bookmarks. Please try again later.");
+    if (error.status === 403) {
+      return {
+        success: false,
+        message: `Error while getting your Bookmarks. Please Sign-in again`,
+      };
+    }
+    return {
+      success: false,
+      message: `Error while getting your Bookmarks: ${error.message}`,
+    };
   }
 };
 
@@ -63,10 +82,13 @@ const deleteBookmarks = async (email, title, id) => {
     await axios.post(`${URL}/deleteBookmarks`, deleteBook, {
       headers: getAuthHeaders(),
     });
-    alert("Bookmark Removed");
+    return { success: true, message: "Bookmark Removed" };
   } catch (error) {
     console.error(`Error while calling DeleteBookmarks API`, error);
-    alert("Failed to remove bookmarked news. Please try again.");
+    return {
+      success: false,
+      message: "Failed to remove bookmarked news. Please try again.",
+    };
   }
 };
 
